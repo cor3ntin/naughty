@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QStringList>
 #include <QIcon>
+#include <QVariant>
 
 class QAction;
 class DesktopNotificationPrivate;
@@ -69,7 +70,7 @@ public:
 
     void setHint(NotificationHint hint, const QVariant & value);
     HintMap hints() const;
-    QVariant hint(NotificationHint);
+    QVariant hint(NotificationHint, const QVariant & defaultValue = QVariant());
 
     bool isActive() const;
 

@@ -38,6 +38,8 @@ protected:
 
     void setClosed(DesktopNotification::NotificationClosedReason reason) {
         Q_EMIT closed(reason);
+        if(reason == NotificationClicked)
+            Q_EMIT clicked();
     }
 
     void setHandle(NotifyNotification* handle) {

@@ -1,4 +1,4 @@
-#include <QCoreApplication>
+#include <QApplication>
 #include "desktopnotification.h"
 #include <QVariant>
 #include <QTimer>
@@ -7,14 +7,18 @@
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication a(argc, argv);
+    QApplication a(argc, argv);
     DesktopNotificationManager manager;
-    manager.setBackend("libnotify");
+    if(!manager.setBackend("growl")) {
+        return -1;
+    }
 
-    DesktopNotification* notification = manager.createNotification(&a, "Test", "this is a test.<br/><b>LOL</b> <a>http://google.com</a>");
+    DesktopNotification* notification = manager.createNotification(&a, "Test", "this is a <a href=\"http://google.com\">test.</a>");
+    if(notification == 0)
+        return 2;
 
     notification->setIcon(QImage("bantrackplateform.png"));
-    notification->setHint(DesktopNotification::NH_Timeout, 20 * 1000);
+    notification->setHint(DesktopNotification::NH_Timeout, -1);
 
     QAction act("Play", 0);
     QObject::connect(&act, SIGNAL(triggered()), qApp, SLOT(quit()));
@@ -25,6 +29,8 @@ int main(int argc, char *argv[])
     notification->addAction(&act2);
 
     QMetaObject::invokeMethod(notification, "show", Qt::QueuedConnection);
-    //QTimer::singleShot(3000, qApp, SLOT(quit()));
+    QObject::connect(notification, SIGNAL(closed(NotificationClosedReason)), qApp, SLOT(quit()));
+
+    //QTimer::singleShot(3000, notification, SLOT(show()));
     return a.exec();
 }

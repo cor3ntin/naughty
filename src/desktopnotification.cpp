@@ -47,7 +47,6 @@ DesktopNotificationBackendFactoryLoader::availableBackendFactories()
 void DesktopNotificationBackendFactoryLoader::load()
 {
     QDir pluginsDir(QLibraryInfo::location(QLibraryInfo::PluginsPath)+"/desktopnotifications");
-    qWarning() << pluginsDir.absolutePath();
     Q_FOREACH(const QString & fileName, pluginsDir.entryList(QDir::Files)) {
        qWarning() << fileName;
        QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
@@ -238,10 +237,10 @@ DesktopNotification::HintMap DesktopNotification::hints() const
     return d->hints;
 }
 
-QVariant DesktopNotification::hint(NotificationHint hint)
+QVariant DesktopNotification::hint(NotificationHint hint, const QVariant &defaultValue)
 {
     Q_D(DesktopNotification);
-    return d->hints.value(hint);
+    return d->hints.value(hint, defaultValue);
 }
 
 bool DesktopNotification::isActive() const
