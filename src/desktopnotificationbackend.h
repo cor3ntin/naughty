@@ -6,6 +6,7 @@
 
 class AbstractDesktopNotificationBackend {
 public:
+    AbstractDesktopNotificationBackend(DesktopNotificationManager* manager);
     virtual ~AbstractDesktopNotificationBackend();
 
     virtual QString name() const = 0;
@@ -18,6 +19,7 @@ public:
     void hideAll();
 
 protected:
+    DesktopNotificationManager* manager;
     QList<QPointer<DesktopNotification> > m_notifications;
 };
 
@@ -27,7 +29,7 @@ public:
     virtual ~AbstractDesktopNotificationBackendFactory(){}
     virtual QString name() const = 0;
     virtual DesktopNotificationManager::BackendCapabilities capabilities() const = 0;
-    virtual AbstractDesktopNotificationBackend* backend() const = 0;
+    virtual AbstractDesktopNotificationBackend* backend(DesktopNotificationManager* manager) const = 0;
 };
 
 Q_DECLARE_INTERFACE(AbstractDesktopNotificationBackendFactory, "AbstractDesktopNotificationBackendFactory/1.0")

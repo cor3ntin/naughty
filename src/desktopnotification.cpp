@@ -5,7 +5,12 @@
 #include <QLibraryInfo>
 #include <QDir>
 #include <QDebug>
+#include <QCoreApplication>
 
+AbstractDesktopNotificationBackend::AbstractDesktopNotificationBackend(DesktopNotificationManager* manager)
+    :manager(manager){
+
+}
 
 AbstractDesktopNotificationBackend::~AbstractDesktopNotificationBackend() {
     Q_FOREACH(QPointer<DesktopNotification> notif, m_notifications){
@@ -125,7 +130,7 @@ bool DesktopNotificationManager::setBackend(const QString & backendName)
     if(!factory)
         return false;
     qDebug() << factory->name();
-    AbstractDesktopNotificationBackend* backend = factory->backend();
+    AbstractDesktopNotificationBackend* backend = factory->backend(this);
     if(!backend)
         return false;
     delete d->backend;
@@ -143,14 +148,37 @@ DesktopNotificationManager::BackendCapabilities  DesktopNotificationManager::cap
 
 QString DesktopNotificationManager::backendName() const
 {
-     Q_D(const DesktopNotificationManager);
+    Q_D(const DesktopNotificationManager);
     if(!d->backend)
         return 0;
     return d->backend->name();
 }
 
-//void setDefaultIcon(const QIcon & icon);
-//void setApplicationName(const QString & name);
+
+QImage DesktopNotificationManager::defaultIcon() const {
+    Q_D(const DesktopNotificationManager);
+    return d->applicationIcon;
+}
+
+void DesktopNotificationManager::setDefaultIcon(const QImage & icon) {
+
+    Q_D(DesktopNotificationManager);
+    d->applicationIcon = icon;
+}
+
+QString DesktopNotificationManager::applicationName() const {
+    Q_D(const DesktopNotificationManager);
+    if(!d->applicationName.isEmpty())
+        return d->applicationName;
+    return QCoreApplication::applicationName();
+}
+
+void DesktopNotificationManager::setApplicationName(const QString & name) {
+
+    Q_D(DesktopNotificationManager);
+    d->applicationName = name;
+
+}
 
 
 DesktopNotification::DesktopNotification(DesktopNotificationManager* manager, QObject* parent)
@@ -252,6 +280,11 @@ bool DesktopNotification::isActive() const
 AbstractDesktopNotificationBackend* DesktopNotification::backend() const {
     Q_D(const DesktopNotification);
     return d->backend;
+}
+
+DesktopNotificationManager* DesktopNotification::manager() const {
+    Q_D(const DesktopNotification);
+    return d->manager;
 }
 
 void DesktopNotification::update(){

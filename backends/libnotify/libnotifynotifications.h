@@ -11,13 +11,13 @@ class LibnotifyNotificationBackendFactory : public QObject, public AbstractDeskt
 public:
     QString name() const;
     DesktopNotificationManager::BackendCapabilities capabilities() const;
-    AbstractDesktopNotificationBackend* backend() const;
+    AbstractDesktopNotificationBackend* backend(DesktopNotificationManager* manager) const;
 };
 
 class LibnotifyNotificationBackend : public AbstractDesktopNotificationBackend
 {
 public:
-    LibnotifyNotificationBackend();
+    LibnotifyNotificationBackend(DesktopNotificationManager* manager);
     ~LibnotifyNotificationBackend();
     QString name() const;
 

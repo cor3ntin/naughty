@@ -76,6 +76,8 @@ public:
 
     AbstractDesktopNotificationBackend* backend() const;
 
+    DesktopNotificationManager* manager() const;
+
 
 Q_SIGNALS:
     void clicked();
@@ -123,11 +125,16 @@ public:
                                             const QString & message = QString());
 
     static QStringList availableBackends();
+
     bool setBackend(const QString & backendName);
     BackendCapabilities capabilities() const;
     QString backendName() const;
 
-    void setDefaultIcon(const QIcon & icon);
+    QImage defaultIcon() const;
+    void setDefaultIcon(const QImage &icon);
+
+
+    QString applicationName() const;
     void setApplicationName(const QString & name);
 private:
     friend class DesktopNotification;

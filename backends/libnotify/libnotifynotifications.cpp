@@ -62,15 +62,16 @@ DesktopNotificationManager::BackendCapabilities LibnotifyNotificationBackendFact
             DesktopNotificationManager::UpdatableNotificationCap;
 }
 
-AbstractDesktopNotificationBackend* LibnotifyNotificationBackendFactory::backend() const
+AbstractDesktopNotificationBackend* LibnotifyNotificationBackendFactory::backend(DesktopNotificationManager* manager) const
 {
-    return new LibnotifyNotificationBackend;
+    return new LibnotifyNotificationBackend(manager);
 }
 
-LibnotifyNotificationBackend::LibnotifyNotificationBackend()
-    :m_capabilities((DesktopNotificationManager::BackendCapabilities)0)
+LibnotifyNotificationBackend::LibnotifyNotificationBackend(DesktopNotificationManager* manager)
+    :AbstractDesktopNotificationBackend(manager),
+     m_capabilities((DesktopNotificationManager::BackendCapabilities)0)
 {
-    notify_init("test");
+    notify_init(manager->applicationName().toLocal8Bit().constData());
 }
 
 LibnotifyNotificationBackend::~LibnotifyNotificationBackend()
@@ -114,6 +115,9 @@ void LibnotifyNotificationBackend::show(DesktopNotification* notification)
     }
 
     QImage icon = notification->hint(DesktopNotification::NH_Icon).value<QImage>();
+    if(icon.isNull())
+        icon = notification->manager()->defaultIcon();
+
     if(!icon.isNull()) {
 
         GdkPixbuf* pixbuf = pixbufFromQImage(icon);
@@ -124,9 +128,10 @@ void LibnotifyNotificationBackend::show(DesktopNotification* notification)
         QString iconName = notification->hint(DesktopNotification::NH_IconName).value<QString>();
         if(!iconName.isEmpty()) {
             notify_notification_set_hint(handle, "image-path",
-                                         g_variant_new_string("google-chrome"));
+                                         g_variant_new_string(iconName.toLocal8Bit().constData()));
         }
     }
+
 
     int timeout = notification->hint(DesktopNotification::NH_Timeout).toInt();
     if(timeout != 0)

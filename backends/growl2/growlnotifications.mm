@@ -36,6 +36,8 @@ private:
 };
 
 
+NSData* NSDataFromQImage(const QImage & image);
+
 static inline NSString* fromQString(const QString &string)
 {
     const QByteArray utf8 = string.toUtf8();
@@ -64,7 +66,9 @@ GrowlNotificationsBackend* parent;
                             [NSNumber numberWithInt:1], GROWL_TICKET_VERSION,
                             notifications, GROWL_NOTIFICATIONS_ALL,
                             notifications, GROWL_NOTIFICATIONS_DEFAULT,
-                            @"com.ankama.test", GROWL_APP_ID, nil];
+                            fromQString(parent->theManager()->applicationName()), GROWL_APP_NAME,
+                            NSDataFromQImage(parent->theManager()->defaultIcon()), GROWL_APP_ICON_DATA,
+                            nil];
     return dict;
 }
 
@@ -106,9 +110,12 @@ AbstractDesktopNotificationBackend* GrowlNotificationsBackendFactory::backend() 
 
 
 
-NSData* NSDataFromQImage(const QImage & image);
-GrowlNotificationsBackend::GrowlNotificationsBackend() {
-    m_delegate = 0;
+
+GrowlNotificationsBackend::GrowlNotificationsBackend(DesktopNotificationManager* manager)
+    :AbstractDesktopNotificationBackend(manager),
+      m_delegate(0)
+{
+
 }
 
 GrowlNotificationsBackend::~GrowlNotificationsBackend() {
@@ -188,6 +195,10 @@ GrowlDesktopNotification *GrowlNotificationsBackend::fromId(long id) {
         }
     }
     return 0;
+}
+
+DesktopNotificationManager* GrowlNotificationsBackend::theManager() const {
+    return this->manager;
 }
 
 NSData* NSDataFromQImage(const QImage & image) {

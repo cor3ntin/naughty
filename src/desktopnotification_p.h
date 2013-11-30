@@ -5,11 +5,15 @@
 #include <QVariant>
 #include <QMap>
 #include <QPointer>
+#include <QString>
+#include <QImage>
 
 class AbstractDesktopNotificationBackend;
 class DesktopNotificationManagerPrivate {
 public:
     AbstractDesktopNotificationBackend* backend;
+    QImage applicationIcon;
+    QString applicationName;
 };
 
 class DesktopNotification;

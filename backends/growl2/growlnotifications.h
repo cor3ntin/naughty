@@ -33,6 +33,9 @@ public:
 public: // but, private
     void timeout(long id);
     void clicked(long id);
+    DesktopNotificationManager* theManager() const;
+
+
 private:
     GrowlDesktopNotification* fromId(long id);
     void* m_delegate;
