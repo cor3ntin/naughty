@@ -13,14 +13,14 @@ class GrowlNotificationsBackendFactory :  public QObject, public AbstractDesktop
 public:
     QString name() const;
     DesktopNotificationManager::BackendCapabilities capabilities() const;
-    AbstractDesktopNotificationBackend* backend() const;
+    AbstractDesktopNotificationBackend* backend(DesktopNotificationManager *manager) const;
 };
 
 class GrowlDesktopNotification;
 class GrowlNotificationsBackend : public AbstractDesktopNotificationBackend
 {
 public:
-    GrowlNotificationsBackend();
+    GrowlNotificationsBackend(DesktopNotificationManager* manager);
     ~GrowlNotificationsBackend();
     QString name() const;
 

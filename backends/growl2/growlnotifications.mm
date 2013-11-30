@@ -97,7 +97,7 @@ DesktopNotificationManager::BackendCapabilities GrowlNotificationsBackendFactory
            | DesktopNotificationManager::PriorizableNotificationCap;
 }
 
-AbstractDesktopNotificationBackend* GrowlNotificationsBackendFactory::backend() const {
+AbstractDesktopNotificationBackend* GrowlNotificationsBackendFactory::backend(DesktopNotificationManager* manager) const {
     NSString* path = @"Growl.framework";
     NSLog(@"path: %@", path);
     NSBundle *growlFramework = [NSBundle bundleWithPath:path];
@@ -105,7 +105,7 @@ AbstractDesktopNotificationBackend* GrowlNotificationsBackendFactory::backend() 
         NSLog(@"Loading growl failed: %@", path);
         return 0;
     }
-   return new GrowlNotificationsBackend;
+    return new GrowlNotificationsBackend(manager);
 }
 
 
