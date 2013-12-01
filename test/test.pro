@@ -10,3 +10,6 @@ TEMPLATE = app
 SOURCES += main.cpp
 
 LIBS += -L$$DESTDIR -lnotification_library
+
+RESOURCES += \
+    icon.qrc

@@ -27,10 +27,18 @@ public:
         NH_Timeout,
         NH_Priority,
 
+        //Hints to customize the generic notification engine
+        NH_GenericBackgroundColor,
+        NH_GenericStyleSheet,
+        NH_GenericScreenCorner,
+
         NH_Title, //internal
         NH_Message, //internal
         NH_Icon, //internal
-        NH_IconName //internal
+        NH_IconName, //internal
+
+        NH_ApplicationIcon, //internal
+        NH_ApplicationName  //internal
     };
 
     enum NotificationPriority {
@@ -42,7 +50,7 @@ public:
     enum NotificationClosedReason {
         NotificationClicked,
         NotificationExpired,
-        NotificationDissmised
+        NotificationDismissed
     };
     typedef QMap<NotificationHint, QVariant> HintMap;
 
@@ -87,6 +95,11 @@ public Q_SLOTS:
     void show();
     void hide();
 
+protected Q_SLOTS:
+    void was_dismissed();
+    void was_clicked();
+
+
 private:
     void update();
 
@@ -130,13 +143,24 @@ public:
     BackendCapabilities capabilities() const;
     QString backendName() const;
 
+
+    void setDefaultHint(DesktopNotification::NotificationHint hint, const QVariant & value);
+    QVariant defaultHint(DesktopNotification::NotificationHint) const;
+
     QImage defaultIcon() const;
     void setDefaultIcon(const QImage &icon);
 
 
     QString applicationName() const;
     void setApplicationName(const QString & name);
+
+
+    void addCategory(const QString & id, const QString & description, bool activated = true);
+    void removeCategory(const QString & id);
+    void enableCategory(const QString & id);
+
 private:
+    bool createDefaultBackend();
     friend class DesktopNotification;
 
     DesktopNotificationManagerPrivate* const d_ptr;

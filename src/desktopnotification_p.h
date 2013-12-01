@@ -12,8 +12,7 @@ class AbstractDesktopNotificationBackend;
 class DesktopNotificationManagerPrivate {
 public:
     AbstractDesktopNotificationBackend* backend;
-    QImage applicationIcon;
-    QString applicationName;
+    DesktopNotification::HintMap hints;
 };
 
 class DesktopNotification;

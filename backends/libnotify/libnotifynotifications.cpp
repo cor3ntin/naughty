@@ -178,7 +178,7 @@ void LibnotifyNotificationBackend::onNotificationClosed(DesktopNotification* not
 
     switch(reason_int) { // https://developer.gnome.org/notification-spec/
         case 1: reason = DesktopNotification::NotificationExpired; break;
-        case 2: reason = DesktopNotification::NotificationDissmised; break;
+        case 2: reason = DesktopNotification::NotificationDismissed; break;
         case 3: reason = DesktopNotification::NotificationClicked; break;
     }
     static_cast<LibnotifyDesktopNotification*>(notification)->setClosed(reason);

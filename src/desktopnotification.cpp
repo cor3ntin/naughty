@@ -58,14 +58,14 @@ void DesktopNotificationBackendFactoryLoader::load()
        if(pluginLoader.load()){
            AbstractDesktopNotificationBackendFactory* instance = qobject_cast<AbstractDesktopNotificationBackendFactory*>(pluginLoader.instance());
            if(!instance){
-               qWarning() << "Not a valid desktop notification plugin" << fileName;
+               qWarning() << "Not a valid desktop notification plugin" << fileName ;
                pluginLoader.unload();
                continue;
            }
            backendFactories.append(instance);
        }
        else {
-            qWarning() << "Not a valid plugin" << fileName;
+            qWarning() << "Not a valid plugin" << fileName << pluginLoader.errorString();
        }
     }
 }
@@ -91,7 +91,7 @@ DesktopNotificationManager::~DesktopNotificationManager() {
 DesktopNotification* DesktopNotificationManager::createNotification(QObject *parent, const QString & title,
                                         const QString & message){
     Q_D(DesktopNotificationManager);
-    if(!d->backend)
+    if(!d->backend && !createDefaultBackend())
         return 0;
 
     DesktopNotification* notification = d->backend->createNewNotification(this, parent);
@@ -111,6 +111,20 @@ QStringList DesktopNotificationManager::availableBackends()
         names.append(f->name());
     }
     return names;
+}
+
+bool  DesktopNotificationManager::createDefaultBackend() {
+    QStringList names = availableBackends();
+
+#ifdef Q_OS_LINUX
+    if(names.contains("libnotify") && setBackend("libnotify"))
+            return true;
+#endif
+
+    if(names.contains("generic") && setBackend("generic"))
+            return true;
+
+    return false;
 }
 
 bool DesktopNotificationManager::setBackend(const QString & backendName)
@@ -157,27 +171,34 @@ QString DesktopNotificationManager::backendName() const
 
 QImage DesktopNotificationManager::defaultIcon() const {
     Q_D(const DesktopNotificationManager);
-    return d->applicationIcon;
+    return d->hints.value(DesktopNotification::NH_ApplicationIcon).value<QImage>();
 }
 
 void DesktopNotificationManager::setDefaultIcon(const QImage & icon) {
-
-    Q_D(DesktopNotificationManager);
-    d->applicationIcon = icon;
+    setDefaultHint(DesktopNotification::NH_ApplicationIcon, icon);
 }
 
 QString DesktopNotificationManager::applicationName() const {
     Q_D(const DesktopNotificationManager);
-    if(!d->applicationName.isEmpty())
-        return d->applicationName;
+    QString name = d->hints.value(DesktopNotification::NH_ApplicationName).toString();
+    if(!name.isEmpty())
+        return name;
     return QCoreApplication::applicationName();
 }
 
 void DesktopNotificationManager::setApplicationName(const QString & name) {
+    setDefaultHint(DesktopNotification::NH_ApplicationName, name);
+}
 
+
+void DesktopNotificationManager::setDefaultHint(DesktopNotification::NotificationHint hint, const QVariant & value) {
     Q_D(DesktopNotificationManager);
-    d->applicationName = name;
+    d->hints.insert(hint, value);
+}
 
+QVariant DesktopNotificationManager::defaultHint(DesktopNotification::NotificationHint hint) const {
+    Q_D(const DesktopNotificationManager);
+    return d->hints.value(hint);
 }
 
 
@@ -268,7 +289,12 @@ DesktopNotification::HintMap DesktopNotification::hints() const
 QVariant DesktopNotification::hint(NotificationHint hint, const QVariant &defaultValue)
 {
     Q_D(DesktopNotification);
-    return d->hints.value(hint, defaultValue);
+    QVariant h = d->hints.value(hint);
+    if(h.isNull())
+        h = manager()->defaultHint(hint);
+    if(h.isNull())
+        h = defaultValue;
+    return h;
 }
 
 bool DesktopNotification::isActive() const
@@ -276,6 +302,7 @@ bool DesktopNotification::isActive() const
     Q_D(const DesktopNotification);
     return d->visible;
 }
+
 
 AbstractDesktopNotificationBackend* DesktopNotification::backend() const {
     Q_D(const DesktopNotification);
@@ -302,4 +329,14 @@ void DesktopNotification::hide() {
     Q_D(DesktopNotification);
     if(d->backend)
         d->backend->hide(this);
+    Q_EMIT closed(DesktopNotification::NotificationExpired);
+}
+
+void DesktopNotification::was_dismissed() {
+    Q_EMIT closed(DesktopNotification::NotificationDismissed);
+}
+
+void DesktopNotification::was_clicked() {
+    Q_EMIT closed(DesktopNotification::NotificationClicked);
+    Q_EMIT clicked();
 }

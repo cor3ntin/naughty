@@ -24,7 +24,7 @@ public:
     ~GrowlNotificationsBackend();
     QString name() const;
 
-    DesktopNotification* createNewNotification(DesktopNotificationManager* manager, QObject* parent = 0);
+    DesktopNotification* createNewNotification(DesktopNotificationManager* thManager, QObject* parent = 0);
 
     void show(DesktopNotification*);
     void hide(DesktopNotification*);

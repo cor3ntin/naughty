@@ -7,18 +7,23 @@
 
 int main(int argc, char *argv[])
 {
+    QApplication::setApplicationName("MyApplication");
+
     QApplication a(argc, argv);
     DesktopNotificationManager manager;
-    if(!manager.setBackend("growl")) {
-        return -1;
-    }
 
-    DesktopNotification* notification = manager.createNotification(&a, "Test", "this is a <a href=\"http://google.com\">test.</a>");
+    /*if(!manager.setBackend("generic")) {
+        return -1;
+    }*/
+
+    DesktopNotification* notification = manager.createNotification(&a,
+                                                                   "Awesome notification",
+                                                                   "This is an <i>awesome</i> notification.<br/>And there is <a href=\"http://google.com\">a link</a>.");
     if(notification == 0)
         return 2;
 
-    notification->setIcon(QImage("bantrackplateform.png"));
-    notification->setHint(DesktopNotification::NH_Timeout, -1);
+    manager.setDefaultIcon(QImage(":/qt.png"));
+    manager.setDefaultHint(DesktopNotification::NH_GenericScreenCorner, Qt::TopLeftCorner);
 
     QAction act("Play", 0);
     QObject::connect(&act, SIGNAL(triggered()), qApp, SLOT(quit()));
@@ -27,6 +32,8 @@ int main(int argc, char *argv[])
     QAction act2("DoSomeStuff", 0);
     QObject::connect(&act2, SIGNAL(triggered()), qApp, SLOT(quit()));
     notification->addAction(&act2);
+
+    QObject::connect(notification, SIGNAL(closed(NotificationClosedReason)), qApp, SLOT(quit()));
 
     QMetaObject::invokeMethod(notification, "show", Qt::QueuedConnection);
     QObject::connect(notification, SIGNAL(closed(NotificationClosedReason)), qApp, SLOT(quit()));

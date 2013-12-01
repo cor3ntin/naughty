@@ -175,7 +175,7 @@ void GrowlNotificationsBackend::timeout(long id) {
     if(n == 0)
         return;
     n->hide();
-    Q_EMIT n->closed(DesktopNotification::NotificationDissmised);
+    Q_EMIT n->closed(DesktopNotification::NotificationDismissed);
 }
 
 void GrowlNotificationsBackend::clicked(long id) {
