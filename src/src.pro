@@ -14,4 +14,7 @@ SOURCES += \
 HEADERS  += \
     desktopnotification.h \
     desktopnotificationbackend.h \
-    desktopnotification_p.h
+    desktopnotification_p.h \
+    desktopnotification_global.h
+
+DEFINES += NAUGHTY_EXPORT

@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <QIcon>
 #include <QVariant>
+#include "desktopnotification_global.h"
 
 class QAction;
 class DesktopNotificationPrivate;
@@ -12,7 +13,7 @@ class DesktopNotificationManager;
 class DesktopNotificationManagerPrivate;
 
 class AbstractDesktopNotificationBackend;
-class DesktopNotification : public QObject
+class NAUGHTY_LIBRARY DesktopNotification : public QObject
 {
     Q_OBJECT
 
@@ -118,7 +119,7 @@ protected:
 };
 
 
-class DesktopNotificationManager : public QObject {
+class NAUGHTY_LIBRARY DesktopNotificationManager : public QObject {
     Q_OBJECT
 public:
     enum BackendCapability {
