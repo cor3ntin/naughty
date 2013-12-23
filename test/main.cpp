@@ -4,6 +4,7 @@
 #include <QTimer>
 #include <QAction>
 #include <QDebug>
+#include <QSystemTrayIcon>
 
 int main(int argc, char *argv[])
 {
@@ -12,7 +13,13 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     DesktopNotificationManager manager;
 
-    /*if(!manager.setBackend("generic")) {
+
+    //QSystemTrayIcon icon(QIcon("/usr/share/icons/synergy.ico"));
+    //manager.setDefaultHint(DesktopNotification::NH_QtSystemTrayInstance, QVariant::fromValue<QObject*>(&icon));
+    //icon.setVisible(true);
+
+    /*if(!manager.setBackend("qtsystray")) {
+        qDebug() << "Error";
         return -1;
     }*/
 
@@ -23,7 +30,7 @@ int main(int argc, char *argv[])
         return 2;
 
     manager.setDefaultIcon(QImage(":/qt.png"));
-    manager.setDefaultHint(DesktopNotification::NH_GenericScreenCorner, Qt::TopLeftCorner);
+    manager.setDefaultHint(DesktopNotification::NH_GenericScreenCorner, Qt::BottomRightCorner);
 
     QAction act("Play", 0);
     QObject::connect(&act, SIGNAL(triggered()), qApp, SLOT(quit()));

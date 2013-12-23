@@ -118,7 +118,7 @@ bool  DesktopNotificationManager::createDefaultBackend() {
 
 #ifdef Q_OS_LINUX
     if(names.contains("libnotify") && setBackend("libnotify"))
-            return true;
+        return true;
 #endif
 
     if(names.contains("generic") && setBackend("generic"))
@@ -143,7 +143,7 @@ bool DesktopNotificationManager::setBackend(const QString & backendName)
 
     if(!factory)
         return false;
-    qDebug() << factory->name();
+    qDebug() << "Creating backend with factory:" << factory->name();
     AbstractDesktopNotificationBackend* backend = factory->backend(this);
     if(!backend)
         return false;

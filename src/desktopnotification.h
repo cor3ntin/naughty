@@ -38,7 +38,10 @@ public:
         NH_IconName, //internal
 
         NH_ApplicationIcon, //internal
-        NH_ApplicationName  //internal
+        NH_ApplicationName,  //internal
+
+
+        NH_QtSystemTrayInstance
     };
 
     enum NotificationPriority {
