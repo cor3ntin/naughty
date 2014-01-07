@@ -25,12 +25,6 @@ protected:
         :DesktopNotification(new LibnotifyDesktopNotificationPrivate, manager, parent) {
 
     }
-    ~LibnotifyDesktopNotification() {
-        Q_D(const LibnotifyDesktopNotification);
-        if(d->visible)
-            d->backend->hide(this);
-    }
-
     NotifyNotification* handle() const {
         Q_D(const LibnotifyDesktopNotification);
         return d->handle;

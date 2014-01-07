@@ -55,4 +55,4 @@ private:
 
 };
 
-#endif // GENERICNOTIFICATIONBOX_H
+#endif // GENERICNOTIFICATIO

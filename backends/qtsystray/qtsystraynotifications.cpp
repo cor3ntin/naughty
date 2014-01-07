@@ -125,3 +125,4 @@ void QtSystrayNotificationBackend::hide(DesktopNotification* notification)
 }
 
 Q_EXPORT_PLUGIN2(desktopnotification, QtSystrayNotificationBackendFactory)
+

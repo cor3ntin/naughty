@@ -65,7 +65,7 @@ public:
     Q_PROPERTY(QString message READ message WRITE setMessage)
 
 
-    virtual ~DesktopNotification(){}
+    virtual ~DesktopNotification() {}
 
     void setIcon(const QImage & icon);
     QImage icon() const;
@@ -93,7 +93,7 @@ public:
 
 Q_SIGNALS:
     void clicked();
-    void closed(NotificationClosedReason reason);
+    void closed(DesktopNotification::NotificationClosedReason reason);
 
 public Q_SLOTS:
     void show();

@@ -14,13 +14,15 @@ AbstractDesktopNotificationBackend::AbstractDesktopNotificationBackend(DesktopNo
 
 AbstractDesktopNotificationBackend::~AbstractDesktopNotificationBackend() {
     Q_FOREACH(QPointer<DesktopNotification> notif, m_notifications){
-        notif->d_ptr->backend = 0;
+        if(notif)
+            notif->d_ptr->backend = 0;
     }
 }
 
 void AbstractDesktopNotificationBackend::hideAll() {
     Q_FOREACH(QPointer<DesktopNotification> notif, m_notifications){
-        notif->hide();
+        if(notif)
+            notif->hide();
     }
 }
 
@@ -51,22 +53,24 @@ DesktopNotificationBackendFactoryLoader::availableBackendFactories()
 
 void DesktopNotificationBackendFactoryLoader::load()
 {
-    QDir pluginsDir(QLibraryInfo::location(QLibraryInfo::PluginsPath)+"/desktopnotifications");
-    Q_FOREACH(const QString & fileName, pluginsDir.entryList(QDir::Files)) {
-       qWarning() << fileName;
-       QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-       if(pluginLoader.load()){
-           AbstractDesktopNotificationBackendFactory* instance = qobject_cast<AbstractDesktopNotificationBackendFactory*>(pluginLoader.instance());
-           if(!instance){
-               qWarning() << "Not a valid desktop notification plugin" << fileName ;
-               pluginLoader.unload();
-               continue;
+    Q_FOREACH(const QString & path, qApp->libraryPaths()) {
+        QDir pluginsDir(path+"/desktopnotifications");
+        Q_FOREACH(const QString & fileName, pluginsDir.entryList(QDir::Files)) {
+           qWarning() << fileName;
+           QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+           if(pluginLoader.load()){
+               AbstractDesktopNotificationBackendFactory* instance = qobject_cast<AbstractDesktopNotificationBackendFactory*>(pluginLoader.instance());
+               if(!instance){
+                   qWarning() << "Not a valid desktop notification plugin" << fileName ;
+                   pluginLoader.unload();
+                   continue;
+               }
+               backendFactories.append(instance);
            }
-           backendFactories.append(instance);
-       }
-       else {
-            qWarning() << "Not a valid plugin" << fileName << pluginLoader.errorString();
-       }
+           else {
+                qWarning() << "Not a valid plugin" << fileName << pluginLoader.errorString();
+           }
+        }
     }
 }
 
@@ -121,6 +125,10 @@ bool  DesktopNotificationManager::createDefaultBackend() {
         return true;
 #endif
 
+#ifdef Q_OS_MAC
+    if(names.contains("growl") && setBackend("growl"))
+        return true;
+#endif
     if(names.contains("generic") && setBackend("generic"))
             return true;
 

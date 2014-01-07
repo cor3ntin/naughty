@@ -4,9 +4,8 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = notification_library
+TARGET = naughty
 TEMPLATE = lib
-
 
 SOURCES += \
     desktopnotification.cpp

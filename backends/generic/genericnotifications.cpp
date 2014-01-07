@@ -8,7 +8,11 @@
 
 static const int DEFAULT_TIMEOUT = 5000;
 static const int DEFAULT_TIMEOUT_FADE = 500;
+#ifdef Q_OS_MAC
+static const Qt::Corner DEFAULT_CORNER = Qt::TopRightCorner;
+#else
 static const Qt::Corner DEFAULT_CORNER = Qt::BottomRightCorner;
+#endif
 
 static const DesktopNotificationManager::BackendCapabilities WIDGET_BACKEND_CAPS =
         DesktopNotificationManager::ApplicationTitleNotificationCap |
@@ -44,11 +48,7 @@ GenericNotification::GenericNotification(DesktopNotificationManager* manager, QO
 }
 
 GenericNotification::~GenericNotification() {
-    Q_D(const GenericNotification);
-    if(d->visible)
-        d->backend->hide(this);
-    if(box)
-        box->deleteLater();
+    hide();
 }
 void GenericNotification::doShow() {
     if(!box) {
@@ -143,6 +143,8 @@ void GenericNotificationBackend::show(DesktopNotification* n) {
         m_pending.enqueue(n->hint(DesktopNotification::NH_Priority, DesktopNotification::NormalPriority).toInt(), n);
         return;
     }
+    if(!QPointer<DesktopNotification>(n))
+        return;
 
     m_current = n;
     GenericNotification * notification = static_cast<GenericNotification*>(n);
@@ -150,7 +152,9 @@ void GenericNotificationBackend::show(DesktopNotification* n) {
 }
 
 void GenericNotificationBackend::hide(DesktopNotification* n) {
-    GenericNotification * notification = static_cast<GenericNotification*>(n);
+    if(!QPointer<DesktopNotification>(n))
+        return;
+    GenericNotification* notification = static_cast<GenericNotification*>(n);
     notification->doHide();
     m_notifications.removeOne(QPointer<DesktopNotification>(notification));
 
@@ -164,3 +168,5 @@ void GenericNotificationBackend::hide(DesktopNotification* n) {
 
 
 Q_EXPORT_PLUGIN2(desktopnotification, GenericNotificationBackendFactory)
+
+#include "moc_genericnotifications.cpp"

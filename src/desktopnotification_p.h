@@ -7,6 +7,7 @@
 #include <QPointer>
 #include <QString>
 #include <QImage>
+#include <QWeakPointer>
 
 class AbstractDesktopNotificationBackend;
 class DesktopNotificationManagerPrivate {
@@ -18,7 +19,7 @@ public:
 class DesktopNotification;
 class DesktopNotificationPrivate {
 public:
-    AbstractDesktopNotificationBackend* backend;
+    QPointer<AbstractDesktopNotificationBackend> backend;
     DesktopNotificationManager* manager;
     DesktopNotification::HintMap hints;
     QList<QAction*> actions;

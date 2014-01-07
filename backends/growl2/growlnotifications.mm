@@ -2,6 +2,7 @@
 #include <Growl/Growl.h>
 #include <QDebug>
 #include <QBuffer>
+#include <QCoreApplication>
 
 #include "desktopnotification_p.h"
 
@@ -22,12 +23,9 @@ protected:
         idStr = [selfPtr stringValue];
     }
     ~GrowlDesktopNotification() {
-        Q_D(const DesktopNotification);
-        GrowlNotificationsBackend* backend = (GrowlNotificationsBackend*)(d->backend);
-        if(d->visible && backend)
-            backend->hide(this);
-        [idStr release];
-        [selfPtr release];
+        hide();
+        //[idStr release];
+        //[selfPtr release];
     }
 
 private:
@@ -98,7 +96,7 @@ DesktopNotificationManager::BackendCapabilities GrowlNotificationsBackendFactory
 }
 
 AbstractDesktopNotificationBackend* GrowlNotificationsBackendFactory::backend(DesktopNotificationManager* manager) const {
-    NSString* path = @"Growl.framework";
+    NSString* path = fromQString(qApp->applicationDirPath()+"/../Frameworks/Growl.framework");
     NSLog(@"path: %@", path);
     NSBundle *growlFramework = [NSBundle bundleWithPath:path];
     if(![growlFramework load]) {

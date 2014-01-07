@@ -4,7 +4,8 @@
 #include "desktopnotification.h"
 #include <QPointer>
 
-class NAUGHTY_LIBRARY AbstractDesktopNotificationBackend {
+class NAUGHTY_LIBRARY AbstractDesktopNotificationBackend : public QObject {
+
 public:
     AbstractDesktopNotificationBackend(DesktopNotificationManager* manager);
     virtual ~AbstractDesktopNotificationBackend();

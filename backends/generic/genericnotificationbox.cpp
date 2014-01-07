@@ -9,6 +9,7 @@
 #include <QPushButton>
 #include <QGraphicsDropShadowEffect>
 #include <QMouseEvent>
+#include <QApplication>
 
 static const int NOTIFICATION_WIDTH  = 300;
 static const int NOTIFICATION_HEIGHT = 90;
@@ -75,7 +76,7 @@ bool GenericNotificationButton::eventFilter(QObject *obj, QEvent *event)
 }
 
 GenericNotificationBox::GenericNotificationBox(QWidget *parent)
-    : QWidget(parent, Qt::Dialog | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Popup)
+    : QWidget(parent, Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::ToolTip)
 {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setMaximumSize(QSize(NOTIFICATION_WIDTH, NOTIFICATION_HEIGHT));
@@ -153,13 +154,22 @@ QSize GenericNotificationBox::sizeHint () const {
 
 void GenericNotificationBox::show(Qt::Corner corner) {
 
-    QDesktopWidget w;
-    int primary_screen = w.primaryScreen();
-    QRect screen_size = w.availableGeometry(primary_screen);
+    QDesktopWidget* w = qApp->desktop();
+    int primary_screen = w->primaryScreen();
+    QRect screen_size = w->availableGeometry(primary_screen);
+        qDebug() << primary_screen << w->screenGeometry(primary_screen) << w->screenCount();
+
+    const int MARGIN_TOP =
+#ifdef Q_OS_MACX
+        25
+#else
+        10
+#endif
+         ;
 
     switch(corner) {
-        case Qt::TopLeftCorner    : move(10, 10); break;
-        case Qt::TopRightCorner   : move((screen_size.width() - width()) - 10, 10); break;
+        case Qt::TopLeftCorner    : move(10, MARGIN_TOP); break;
+        case Qt::TopRightCorner   : move((screen_size.width() - width()) - 10, MARGIN_TOP); break;
         case Qt::BottomLeftCorner : move(10, (screen_size.height() - height()) - 15); break;
         case Qt::BottomRightCorner: move((screen_size.width() - width()) - 10, (screen_size.height() - height()) - 15); break;
     }
