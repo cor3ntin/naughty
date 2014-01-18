@@ -1,6 +1,5 @@
 TARGET = qtsystraybackend
 TEMPLATE = lib
-QT += plugins
 
 include(../backends.pri)
 

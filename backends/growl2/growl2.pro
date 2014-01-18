@@ -12,8 +12,6 @@ HEADERS += growlnotifications.h
 HEADERS += Growl/Growl.h Growl/GrowlApplicationBridge.h Growl/GrowlDefines.h
 
 
-INSTALLS += target
-
 LIBS += -framework Foundation
 
 

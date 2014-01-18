@@ -17,3 +17,4 @@ HEADERS  += \
     desktopnotification_global.h
 
 DEFINES += NAUGHTY_EXPORT
+mac:DESTDIR = $$DESTDIR/test.app/Contents/MacOs

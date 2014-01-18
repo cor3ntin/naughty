@@ -1,6 +1,5 @@
 TARGET = genericbackend
 TEMPLATE = lib
-QT += plugins
 
 include(../backends.pri)
 

@@ -44,10 +44,12 @@ static inline NSString* fromQString(const QString &string)
 }
 
 @interface NaughtyGrowlDelegate : NSObject <GrowlApplicationBridgeDelegate>
-GrowlNotificationsBackend* parent;
+
 @end
 
 @implementation NaughtyGrowlDelegate
+
+GrowlNotificationsBackend* parent;
 
 - (id) initWithParent:(GrowlNotificationsBackend*) theParent{
     if ((self = [super init])) {
