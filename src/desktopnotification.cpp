@@ -99,6 +99,8 @@ DesktopNotification* DesktopNotificationManager::createNotification(QObject *par
         return 0;
 
     DesktopNotification* notification = d->backend->createNewNotification(this, parent);
+    if(!notification)
+        return 0;
     notification->d_ptr->backend = d->backend;
     notification->d_ptr->visible = false;
 
@@ -126,11 +128,14 @@ bool  DesktopNotificationManager::createDefaultBackend() {
 #endif
 
 #ifdef Q_OS_MAC
+    if(QSysInfo::MacintoshVersion >= QSysInfo::MV_10_8 && names.contains("osx")
+           && setBackend("osx"))
+        return true;
     if(names.contains("growl") && setBackend("growl"))
         return true;
 #endif
     if(names.contains("generic") && setBackend("generic"))
-            return true;
+        return true;
 
     return false;
 }
