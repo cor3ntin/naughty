@@ -131,7 +131,9 @@ bool  DesktopNotificationManager::createDefaultBackend() {
     if(QSysInfo::MacintoshVersion >= QSysInfo::MV_10_8 && names.contains("osx")
            && setBackend("osx"))
         return true;
-    if(names.contains("growl") && setBackend("growl"))
+    // growl only works for 10.6+
+    if(QSysInfo::MacintoshVersion >= QSysInfo::MV_10_6 && names.contains("growl")
+       && setBackend("growl"))
         return true;
 #endif
     if(names.contains("generic") && setBackend("generic"))
