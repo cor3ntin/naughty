@@ -21,8 +21,7 @@ AnkamaQtPlugin {
     }
 
     cpp.cxxFlags : pkgConfig.cflags
-    cpp.linkerFlags : pkgConfig.libs
-
+    cpp.dynamicLibraries : ["notify", "gdk_pixbuf-2.0", "gio-2.0", "gobject-2.0", "glib-2.0"]
     Group {
         name : "Sources"
         files: [
