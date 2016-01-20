@@ -1,6 +1,6 @@
 import qbs
 
-DynamicLibrary {
+AnkamaDynamicLibrary {
     name:"naughty"
     Depends { name: "cpp" }
     Depends { name: "Qt.core" }
