@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-linux:SUBDIRS += libnotify
+linux-*:SUBDIRS += libnotify
 
 mac:SUBDIRS+=growl2 osx
 

@@ -27,6 +27,7 @@ public:
         NH_NotificationName,
         NH_Timeout,
         NH_Priority,
+        NH_FallbackActionName,
 
         //Hints to customize the generic notification engine
         NH_GenericBackgroundColor,

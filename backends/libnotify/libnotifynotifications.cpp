@@ -31,9 +31,9 @@ protected:
     }
 
     void setClosed(DesktopNotification::NotificationClosedReason reason) {
-        Q_EMIT closed(reason);
         if(reason == NotificationClicked)
             Q_EMIT clicked();
+        Q_EMIT closed(reason);
     }
 
     void setHandle(NotifyNotification* handle) {
@@ -128,7 +128,7 @@ void LibnotifyNotificationBackend::show(DesktopNotification* notification)
 
 
     int timeout = notification->hint(DesktopNotification::NH_Timeout).toInt();
-    if(timeout != 0)
+    if(timeout > 0)
         notify_notification_set_timeout(handle, timeout);
 
     notify_notification_clear_actions(handle);
@@ -143,6 +143,15 @@ void LibnotifyNotificationBackend::show(DesktopNotification* notification)
                                         QByteArray::number(id).constData(),
                                         qPrintable(action->text()),
                                         ::onNotificationActionClicked, notification, 0);
+    }
+    if(notification->actions().isEmpty()) {
+        QString actName = notification->hint(DesktopNotification::NH_FallbackActionName).toString();
+        if(!actName.isEmpty()) {
+            notify_notification_add_action (handle,
+                                            "_clicked",
+                                            qPrintable(actName),
+                                            ::onNotificationActionClicked, notification, 0);
+        }
     }
 
     notify_notification_show(handle,0);
@@ -168,7 +177,7 @@ void LibnotifyNotificationBackend::onNotificationClosed(DesktopNotification* not
 
     gint reason_int = notify_notification_get_closed_reason(static_cast<LibnotifyDesktopNotification*>(notification)->handle());
 
-    DesktopNotification::NotificationClosedReason reason;
+    DesktopNotification::NotificationClosedReason reason = DesktopNotification::NotificationExpired;
 
     switch(reason_int) { // https://developer.gnome.org/notification-spec/
         case 1: reason = DesktopNotification::NotificationExpired; break;
@@ -180,6 +189,10 @@ void LibnotifyNotificationBackend::onNotificationClosed(DesktopNotification* not
 
 void LibnotifyNotificationBackend::onNotificationActionClicked(DesktopNotification* notification, char* action)
 {
+    if(strcmp(action, "_clicked") == 0) {
+        static_cast<LibnotifyDesktopNotification*>(notification)->setClosed(DesktopNotification::NotificationClicked);
+        return;
+    }
     int actionId = QByteArray(action).toInt();
     Q_FOREACH(QAction* action, notification->actions()) {
         int id = action->property("_libnotifyId").toInt();
@@ -240,5 +253,6 @@ GdkPixbuf* pixbufFromQImage(QImage & image) {
     return pixbuf2;
 }
 
-
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(desktopnotification, LibnotifyNotificationBackendFactory)
+#endif

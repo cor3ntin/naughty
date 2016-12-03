@@ -1,5 +1,6 @@
 TARGET = qtsystraybackend
 TEMPLATE = lib
+QT += widgets
 
 include(../backends.pri)
 

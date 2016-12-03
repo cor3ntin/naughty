@@ -1,5 +1,5 @@
 #include "growlnotifications.h"
-#include <Growl/Growl.h>
+#include "Growl/Growl.h"
 #include <QDebug>
 #include <QBuffer>
 #include <QCoreApplication>
@@ -212,5 +212,6 @@ NSData* NSDataFromQImage(const QImage & image) {
     return image_data;
 }
 
-
-Q_EXPORT_PLUGIN2(desktopnotification, GrowlNotificationsBackendFactory)
+#if QT_VERSION < 0x050000
+    Q_EXPORT_PLUGIN2(desktopnotification, GrowlNotificationsBackendFactory)
+#endif

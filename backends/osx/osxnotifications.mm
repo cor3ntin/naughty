@@ -5,9 +5,15 @@
 #include <QAction>
 
 #include "desktopnotification_p.h"
+#include <Availability.h>
 
 #import <Cocoa/Cocoa.h>
 
+
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 1080
+@protocol NSUserNotificationCenterDelegate
+@end
+#endif
 
 
 static inline NSString* fromQString(const QString &string)
@@ -43,7 +49,7 @@ OsXNotificationsBackend* parent;
     Q_UNUSED(center)
 
     parent->clicked((DesktopNotification*)([[[notification userInfo] objectForKey:@"__ptr"] longValue]),
-        [notification activationType] == 2); // Button clicked ?
+        (long)([notification activationType]) == 2); // Button clicked ?
 }
 
 @end
@@ -137,10 +143,9 @@ void OsXNotificationsBackend::show(DesktopNotification* n) {
         [notification->handle setSoundName:fromQString(sound)];
     }
 
-    [notification->handle
-            // put the pointer to the actual notification in the 'userInfo' dict, as a NSumber
-            setUserInfo:@{ @"__ptr": [NSNumber numberWithLong:(long)notification]}
-        ];
+    // put the pointer to the actual notification in the 'userInfo' dict, as a NSumber
+    NSDictionary *dict = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithLong:(long)notification], @"__ptr", nil];
+    [notification->handle setUserInfo:dict];
     [center deliverNotification:notification->handle];
 
     QPointer<DesktopNotification> ptr(notification);
@@ -176,4 +181,6 @@ void OsXNotificationsBackend::clicked(DesktopNotification* n, bool actionButtonC
     }
 }
 
-Q_EXPORT_PLUGIN2(desktopnotification, OsXNotificationsBackendFactory)
+#if QT_VERSION < 0x050000
+    Q_EXPORT_PLUGIN2(desktopnotification, OsXNotificationsBackendFactory)
+#endif

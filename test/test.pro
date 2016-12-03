@@ -9,9 +9,7 @@ TEMPLATE = app
 
 SOURCES += main.cpp
 
-LIBS += -L$$DESTDIR -lnaughty
+LIBS += -L$$DESTDIR -lnotification_library
 
 RESOURCES += \
     icon.qrc
-
-DEFINES += NAUGHTY_IMPORT

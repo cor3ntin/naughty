@@ -97,7 +97,7 @@ void QtSystrayNotificationBackend::show(DesktopNotification* notification)
             n->hide();
     }
 
-    int timeout = notification->hint(DesktopNotification::NH_Timeout, 10000).toInt();
+    int timeout = notification->hint(DesktopNotification::NH_Timeout, 12000).toInt();
 
     QObject::connect(m_icon.data(), SIGNAL(messageClicked()), notification, SLOT(onClicked()));
 
@@ -124,5 +124,6 @@ void QtSystrayNotificationBackend::hide(DesktopNotification* notification)
     m_notifications.removeOne(QPointer<DesktopNotification>(notification));
 }
 
-Q_EXPORT_PLUGIN2(desktopnotification, QtSystrayNotificationBackendFactory)
-
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2(desktopnotification, QtSystrayNotificationBackendFactory)
+#endif

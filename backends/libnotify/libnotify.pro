@@ -1,6 +1,6 @@
 TARGET = libnotifybackend
 TEMPLATE = lib
-QT += plugins
+QT += widgets
 
 include(../backends.pri)
 

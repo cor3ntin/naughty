@@ -6,7 +6,7 @@
 #include <QPropertyAnimation>
 
 
-static const int DEFAULT_TIMEOUT = 5000;
+static const int DEFAULT_TIMEOUT = 12000;
 static const int DEFAULT_TIMEOUT_FADE = 500;
 #ifdef Q_OS_MAC
 static const Qt::Corner DEFAULT_CORNER = Qt::TopRightCorner;
@@ -57,6 +57,8 @@ void GenericNotification::doShow() {
         connect(box, SIGNAL(dismissed()), this, SLOT(was_dismissed()));
     }
     int timeout = hint(NH_Timeout, DEFAULT_TIMEOUT).toInt();
+    if(timeout <= 0)
+        timeout = DEFAULT_TIMEOUT;
 
     if(timer)
         timer->stop();
@@ -166,7 +168,8 @@ void GenericNotificationBackend::hide(DesktopNotification* n) {
 }
 
 
-
-Q_EXPORT_PLUGIN2(desktopnotification, GenericNotificationBackendFactory)
+#if QT_VERSION < 0x050000
+  Q_EXPORT_PLUGIN2(desktopnotification, GenericNotificationBackendFactory)
+#endif
 
 #include "moc_genericnotifications.cpp"

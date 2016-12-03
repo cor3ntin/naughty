@@ -8,6 +8,9 @@ class LibnotifyNotificationBackendFactory : public QObject, public AbstractDeskt
 {
     Q_OBJECT
     Q_INTERFACES(AbstractDesktopNotificationBackendFactory)
+#if QT_VERSION >= 0x050000
+    Q_PLUGIN_METADATA(IID "AbstractDesktopNotificationBackendFactory/1.0")
+#endif
 public:
     QString name() const;
     DesktopNotificationManager::BackendCapabilities capabilities() const;

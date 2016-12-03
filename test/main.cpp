@@ -40,10 +40,10 @@ int main(int argc, char *argv[])
     QObject::connect(&act2, SIGNAL(triggered()), qApp, SLOT(quit()));
     notification->addAction(&act2);
 
-    QObject::connect(notification, SIGNAL(closed(DesktopNotification::NotificationClosedReason)), qApp, SLOT(quit()));
+    QObject::connect(notification, SIGNAL(closed(NotificationClosedReason)), qApp, SLOT(quit()));
 
     QMetaObject::invokeMethod(notification, "show", Qt::QueuedConnection);
-    QObject::connect(notification, SIGNAL(closed(DesktopNotification::NotificationClosedReason)), qApp, SLOT(quit()));
+    QObject::connect(notification, SIGNAL(closed(NotificationClosedReason)), qApp, SLOT(quit()));
 
     //QTimer::singleShot(3000, notification, SLOT(show()));
     return a.exec();
